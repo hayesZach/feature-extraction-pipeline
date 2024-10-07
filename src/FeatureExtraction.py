@@ -22,12 +22,17 @@ def remove_special_chars(text):
 
 def AverageSentenceLength(text) -> float:
     # Tokenize sentences
-    num_sentences = len(sent_tokenize(text))
+    sentences = sent_tokenize(text)
+    num_sentences = len(sentences)
     
     # Tokenize words
-    num_words = len(word_tokenize(text))
+    words = word_tokenize(text)
     
-    if num_sentences or num_words == 0:
+    # remove special characters from each word
+    cleaned_words = [remove_special_chars(word) for word in words if word.isalpha()]
+    num_words = len(cleaned_words)
+    
+    if num_sentences == 0 or num_words == 0:
         return 0.0
     
     # Calculate ASL
