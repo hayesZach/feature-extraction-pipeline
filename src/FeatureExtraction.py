@@ -83,7 +83,25 @@ def FleschKincaidGradeLevel(text) -> float:
 def GunningFogIndex(text) -> float:
     # Gradelevel = 0.4(ASL + PHW)
     # PHW: The percentage of hard words
-    return
+    ASL = AverageSentenceLength(text)
+    PHW = PercentageHardWords(text)
+    return 0.4 * (ASL + PHW)
+
+def PercentageHardWords(text) -> float:
+    words = word_tokenize(text)
+    
+    # remove special characters from each word
+    cleaned_words = [remove_special_chars(word) for word in words if word.isalpha()]
+    
+    if len(cleaned_words) == 0:
+        return 0.0
+    
+    hard_word_count = 0
+    for word in cleaned_words:
+        if is_complex_word(word):
+            hard_word_count += 1
+    
+    return (hard_word_count / len(cleaned_words)) * 100
 
 def is_complex_word(word):
     if re.match(r'(.*ing|.*ed|.*es|.*ly)$', word):
@@ -91,6 +109,56 @@ def is_complex_word(word):
     
     syllable_count = textstat.syllable_count(word)
     return syllable_count >= 3
+
+def ShannonEntropy(text) -> float:
+    from scipy.stats import entropy
+    from collections import Counter
+    
+    words = word_tokenize(text)
+    
+    # remove special characters from each word
+    cleaned_words = [remove_special_chars(word) for word in words if word.isalpha()]
+    
+    word_frequencies = Counter(cleaned_words)
+    
+    total_words = len(cleaned_words)
+    if total_words == 0:
+        return 0.0
+    
+    probabilities = []
+    for word in word_frequencies:
+        prob = word_frequencies[word] / total_words
+        probabilities.append(prob)
+    
+    probabilities_array = np.array(probabilities)
+    
+    return entropy(probabilities_array, base=2)
+
+def SimpsonsIndex(text) -> float:
+    from collections import Counter
+    
+    words = word_tokenize(text)
+    
+    # remove special characters from each word
+    cleaned_words = [remove_special_chars(word) for word in words if word.isalpha()]
+    
+    word_frequencies = Counter(cleaned_words)
+    
+    N = sum(word_frequencies.values())
+    if N <= 1:
+        return 0.0
+    
+    sum_n_i = 0
+    for n_i in word_frequencies.values():
+        sum_n_i += n_i * (n_i - 1)
+        
+    D = 1 - (sum_n_i / (N * (N - 1)))
+    
+    return D
+    
+def DaleChallReadability(text) -> float:
+    #dale_chall_words = textstat.dale_chall_word_list()
+    return textstat.dale_chall_readability_score(text)
 
 
 def RemoveHeaderText(text):
@@ -133,6 +201,10 @@ if __name__ == '__main__':
     
     print(text)
     
-    print(FleschReadingEaseScore(text))
-    print(FleschKincaidGradeLevel(text))
+    print(f"FleschReadingEaseScore: {FleschReadingEaseScore(text):.2f}")
+    print(f"FleschKincaidGradeLevel: {FleschKincaidGradeLevel(text):.2f}")
+    print(f"GunningFogIndex: {GunningFogIndex(text):.2f}")
+    print(f"ShannonEntropy: {ShannonEntropy(text):.2f}")
+    print(f"SimpsonsIndex: {SimpsonsIndex(text):.2f}")
+    print(f"DaleChallReadabilityScore: {DaleChallReadability(text):.2f}")
     
