@@ -157,9 +157,7 @@ def SimpsonsIndex(text) -> float:
     return D
     
 def DaleChallReadability(text) -> float:
-    #dale_chall_words = textstat.dale_chall_word_list()
     return textstat.dale_chall_readability_score(text)
-
 
 def RemoveHeaderText(text):
     # The header of each book usually ends with '** anything **' or '*** anything ***' 
@@ -181,30 +179,3 @@ def RemoveFooterText(text):
         footer_start_pos = last_match.start()
         return text[:footer_start_pos].strip()
     return text
-    
-
-if __name__ == '__main__':
-    current_directory = os.getcwd()
-    print(f"\nCurrent Working Directory: {current_directory}")
-    
-    parent_directory = os.path.abspath(os.path.join(current_directory, os.pardir))
-    print(f"Parent Directory: {parent_directory}\n")
-    
-    # load writing sample
-    with open('datasets/ProjectGutenbergTop2000/books/2.txt', 'r', encoding='utf-8-sig') as file:
-        text = file.read()
-    
-    # Remove header text
-    text = RemoveHeaderText(text)
-    # Remove footer text
-    text = RemoveFooterText(text)
-    
-    print(text)
-    
-    print(f"FleschReadingEaseScore: {FleschReadingEaseScore(text):.2f}")
-    print(f"FleschKincaidGradeLevel: {FleschKincaidGradeLevel(text):.2f}")
-    print(f"GunningFogIndex: {GunningFogIndex(text):.2f}")
-    print(f"ShannonEntropy: {ShannonEntropy(text):.2f}")
-    print(f"SimpsonsIndex: {SimpsonsIndex(text):.2f}")
-    print(f"DaleChallReadabilityScore: {DaleChallReadability(text):.2f}")
-    
