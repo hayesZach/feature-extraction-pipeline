@@ -157,7 +157,6 @@ def SimpsonsIndex(text) -> float:
     return D
     
 def DaleChallReadability(text) -> float:
-    #dale_chall_words = textstat.dale_chall_word_list()
     return textstat.dale_chall_readability_score(text)
 
 
